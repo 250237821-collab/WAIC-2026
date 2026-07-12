@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0B1E3F">
+<title>WAIC 2026 采访方案 · 经济半小时</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{width:100%;overflow-x:hidden;background:#0B1E3F}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    color:#EAF1FB;line-height:1.6;
+    background:linear-gradient(180deg,#0B1E3F 0%,#14305E 50%,#0B1E3F 100%);
+    background-attachment:fixed;
+    padding-bottom:80px;
+  }
+
+  /* 进度条 */
+  .progress-bar{
+    position:fixed;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.08);z-index:100;
+  }
+  .progress-fill{height:100%;background:linear-gradient(90deg,#FF6432,#FFD447);width:0%;transition:width 0.1s}
+
+  /* 目录悬浮 */
+  .toc-btn{
+    position:fixed;right:16px;bottom:24px;z-index:99;
+    width:52px;height:52px;border-radius:50%;
+    background:#FF6432;color:#fff;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 20px rgba(255,100,50,0.5);
+    border:none;cursor:pointer;
+  }
+  .toc-panel{
+    position:fixed;right:16px;bottom:88px;z-index:99;
+    background:rgba(11,30,63,0.98);border:1px solid rgba(255,100,50,0.4);
+    border-radius:12px;padding:12px;min-width:180px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.5);
+    display:none;
+  }
+  .toc-panel.show{display:block}
+  .toc-panel a{
+    display:block;padding:10px 12px;color:#EAF1FB;text-decoration:none;font-size:14px;
+    border-radius:6px;margin-bottom:2px;
+  }
+  .toc-panel a:active{background:rgba(255,100,50,0.2)}
+  .toc-panel a .icon{margin-right:8px}
+
+  /* 页面容器 */
+  .container{max-width:750px;margin:0 auto;padding:0 20px}
+
+  /* 顶部 hero */
+  .hero{
+    text-align:center;padding:60px 20px 40px;
+    border-bottom:2px solid rgba(255,100,50,0.4);
+    margin-bottom:30px;
+  }
+  .hero .badge{
+    display:inline-block;padding:6px 18px;background:#FF6432;color:#fff;
+    border-radius:20px;font-size:13px;font-weight:600;letter-spacing:1px;margin-bottom:16px;
+  }
+  .hero h1{font-size:44px;font-weight:800;color:#fff;letter-spacing:2px;margin-bottom:8px;line-height:1.1}
+  .hero .subtitle{font-size:16px;color:#B8CDEA;font-weight:300;margin-bottom:18px}
+  .hero .theme{
+    display:inline-block;padding:8px 20px;background:rgba(255,255,255,0.08);
+    border:1px solid #0066FF;border-radius:6px;font-size:15px;color:#4D9BFF;
+  }
+
+  /* 章节通用 */
+  section{padding:20px 20px 30px;scroll-margin-top:20px}
+  .section-title{
+    display:flex;align-items:center;font-size:22px;font-weight:800;color:#fff;
+    margin-bottom:20px;padding-left:14px;border-left:4px solid #FF6432;
+  }
+  .section-title .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:32px;height:32px;background:#FF6432;color:#fff;border-radius:50%;
+    font-size:16px;margin-right:12px;
+  }
+
+  /* 大会信息 */
+  .info-list{display:flex;flex-direction:column;gap:12px}
+  .info-item{
+    background:rgba(255,255,255,0.05);border-left:3px solid #0066FF;
+    padding:14px 16px;border-radius:8px;
+  }
+  .info-item .label{font-size:13px;color:#B8CDEA;margin-bottom:6px}
+  .info-item .value{font-size:16px;color:#fff;font-weight:600;line-height:1.5}
+
+  /* 方向卡片 */
+  .direction{
+    background:rgba(255,255,255,0.04);border-radius:14px;padding:20px 18px;margin-bottom:18px;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .direction.a{border-left:5px solid #FF6432}
+  .direction.b{border-left:5px solid #4D9BFF}
+  .direction.c{border-left:5px solid #FFD447}
+
+  .dir-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+  .dir-icon{font-size:34px;line-height:1;flex-shrink:0}
+  .dir-tag{
+    display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;
+    font-weight:700;letter-spacing:1px;margin-bottom:6px;
+  }
+  .direction.a .dir-tag{background:#FF6432;color:#fff}
+  .direction.b .dir-tag{background:#4D9BFF;color:#fff}
+  .direction.c .dir-tag{background:#FFD447;color:#0B1E3F}
+  .dir-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px}
+  .dir-sub{font-size:13px;color:#B8CDEA}
+
+  .forum{
+    background:rgba(0,0,0,0.25);border-radius:8px;padding:14px;margin-bottom:14px;
+    border-left:3px solid #4DE0BC;
+  }
+  .forum-label{font-size:12px;color:#4DE0BC;font-weight:600;margin-bottom:6px}
+  .forum-name{font-size:15px;color:#fff;font-weight:700;margin-bottom:4px;line-height:1.4}
+  .forum-theme{font-size:13px;color:#FFD447;font-style:italic}
+
+  /* 嘉宾行 */
+  .guest{
+    display:flex;flex-direction:column;gap:6px;
+    padding:12px 14px;margin-bottom:8px;border-radius:8px;
+    background:rgba(255,255,255,0.03);border-left:2px solid rgba(255,255,255,0.15);
+  }
+  .guest.top{background:rgba(255,100,50,0.1);border-left-color:#FF6432}
+  .guest-line1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .stars{color:#FFD447;font-size:12px;letter-spacing:-1px}
+  .g-name{font-size:17px;font-weight:700;color:#fff}
+  .g-en{font-size:11px;color:#B8CDEA;font-weight:400}
+  .g-role{font-size:13px;color:#E1EBFB;line-height:1.5}
+  .g-value{font-size:12px;color:#FFD447;font-weight:500}
+
+  /* Sutton 王牌 */
+  .king{
+    background:linear-gradient(135deg,#FF6432 0%,#FFD447 100%);
+    border-radius:12px;padding:18px;margin:14px 0;color:#0B1E3F;
+  }
+  .king-icon{font-size:36px;margin-bottom:8px}
+  .king-name{font-size:22px;font-weight:800;margin-bottom:4px}
+  .king-role{font-size:13px;font-weight:600;line-height:1.5;margin-bottom:10px}
+  .king-hl{
+    display:inline-block;padding:5px 12px;background:rgba(11,30,63,0.9);color:#FFD447;
+    border-radius:5px;font-size:12px;font-weight:600;
+  }
+
+  /* 补充 box */
+  .extra{
+    background:rgba(0,0,0,0.25);border-radius:8px;padding:12px 14px;margin-top:12px;
+    border-left:3px solid #4DE0BC;
+  }
+  .extra.gold{border-left-color:#FFD447}
+  .extra-title{font-size:13px;font-weight:600;color:#4DE0BC;margin-bottom:6px}
+  .extra.gold .extra-title{color:#FFD447}
+  .extra-list{font-size:13px;color:#E1EBFB;line-height:1.75}
+
+  /* 两组作战 */
+  .teams{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+  .team{
+    background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;
+    border-left:4px solid;
+  }
+  .team.a{border-left-color:#FF6432}
+  .team.b{border-left-color:#4DE0BC}
+  .team-name{font-size:17px;font-weight:800;color:#fff;margin-bottom:4px}
+  .team-mission{font-size:13px;color:#B8CDEA;margin-bottom:12px}
+  .team-detail{font-size:13px;color:#E1EBFB;line-height:1.75}
+  .team-detail b{color:#FFD447}
+
+  /* Day 卡片 */
+  .day{
+    background:rgba(255,255,255,0.04);border-radius:14px;padding:18px 16px;margin-bottom:16px;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .day-1{border-top:4px solid #FF6432}
+  .day-2{border-top:4px solid #4D9BFF}
+  .day-3{border-top:4px solid #FFD447}
+  .day-4{border-top:4px solid #4DE0BC}
+  .day-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+  .day-tag{display:inline-block;font-size:12px;color:#B8CDEA;font-weight:400;margin-left:8px}
+  .day-mission{
+    background:rgba(0,0,0,0.3);border-radius:6px;padding:8px 12px;margin:10px 0 14px;
+    font-size:13px;color:#FFD447;
+  }
+  .day-mission b{color:#4DE0BC}
+
+  .group{margin-bottom:14px}
+  .group-label{font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;padding-left:10px;border-left:3px solid}
+  .group.a .group-label{border-left-color:#FF6432}
+  .group.b .group-label{border-left-color:#4DE0BC}
+  .sch{
+    display:flex;gap:10px;padding:8px 10px;margin-bottom:4px;
+    background:rgba(255,255,255,0.03);border-radius:6px;
+    font-size:13px;line-height:1.5;
+  }
+  .sch-time{color:#FFD447;font-weight:600;flex-shrink:0;min-width:80px}
+  .sch-txt{color:#E1EBFB;flex:1}
+  .venue{
+    display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;
+    margin-right:4px;font-weight:600;
+  }
+  .venue-shibo{background:#FF6432;color:#fff}
+  .venue-zhangjiang{background:#4D9BFF;color:#fff}
+  .venue-xijian{background:#4DE0BC;color:#0B1E3F}
+  .venue-hotel{background:#7A93B8;color:#fff}
+  .hl{color:#FFD447;font-weight:700}
+
+  /* 8 条建议 */
+  .tips-grid{display:flex;flex-direction:column;gap:10px}
+  .tip{
+    background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;
+    border-left:3px solid #FF6432;
+  }
+  .tip-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .tip-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;background:#FF6432;color:#fff;border-radius:50%;
+    font-size:13px;font-weight:700;flex-shrink:0;
+  }
+  .tip-title{font-size:15px;font-weight:700;color:#fff}
+  .tip-desc{font-size:13px;color:#B8CDEA;line-height:1.6;padding-left:36px}
+
+  /* 底部 */
+  .footer{
+    text-align:center;padding:40px 20px 20px;margin-top:30px;
+    border-top:1px solid rgba(255,255,255,0.1);
+  }
+  .footer .brand{color:#FF6432;font-weight:700;letter-spacing:3px;font-size:16px;margin-bottom:6px}
+  .footer .sub{font-size:12px;color:#7A93B8}
+
+  /* 章节间分隔 */
+  .divider{
+    height:1px;margin:20px 0;
+    background:linear-gradient(90deg,transparent,rgba(255,100,50,0.3),transparent);
+  }
+
+  /* ========== 地图 & 路线 ========== */
+  .map-wrap{
+    background:rgba(255,255,255,0.04);border-radius:14px;padding:16px 12px 20px;
+    border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;
+  }
+  .map-hint{font-size:12px;color:#B8CDEA;text-align:center;margin-bottom:10px;letter-spacing:1px}
+  .map-svg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#0a1a35 0%,#0d244d 100%);border-radius:10px}
+
+  /* 图例 */
+  .legend{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;
+    background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;
+  }
+  .lg{display:flex;align-items:center;gap:8px;font-size:12px;color:#EAF1FB}
+  .lg .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .lg .line{width:20px;height:3px;flex-shrink:0;border-radius:2px}
+  .lg .line-dash{width:20px;height:0;border-top:2px dashed;flex-shrink:0}
+
+  /* 日程 tab */
+  .day-tabs{
+    display:flex;gap:6px;margin:16px 0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:4px;
+  }
+  .day-tab{
+    flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;
+    background:rgba(255,255,255,0.08);color:#B8CDEA;border:none;cursor:pointer;white-space:nowrap;
+    transition:all 0.2s;
+  }
+  .day-tab.active{background:#FF6432;color:#fff;box-shadow:0 3px 12px rgba(255,100,50,0.4)}
+  .day-tab.all{background:rgba(255,215,71,0.15);color:#FFD447;border:1px solid rgba(255,215,71,0.3)}
+  .day-tab.all.active{background:#FFD447;color:#0B1E3F;border-color:#FFD447}
+
+  /* 路线信息面板 */
+  .route-info{
+    background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 14px;
+    font-size:13px;color:#E1EBFB;line-height:1.7;
+  }
+  .route-info .rt-title{color:#FFD447;font-weight:700;margin-bottom:6px;font-size:14px}
+  .route-info .rt-row{display:flex;gap:8px;margin-bottom:4px}
+  .route-info .rt-tag{
+    display:inline-block;padding:1px 8px;border-radius:3px;font-size:11px;
+    font-weight:600;flex-shrink:0;height:18px;line-height:16px;
+  }
+  .rt-a{background:#FF6432;color:#fff}
+  .rt-b{background:#4DE0BC;color:#0B1E3F}
+
+  /* 交通提示 */
+  .transit{
+    background:rgba(77,155,255,0.08);border-left:3px solid #4D9BFF;
+    border-radius:6px;padding:10px 12px;margin-top:12px;font-size:12px;color:#B8CDEA;line-height:1.6;
+  }
+  .transit b{color:#4D9BFF}
+
+  /* 距离标签 */
+  .distances{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;
+  }
+  .dist-item{
+    background:rgba(255,255,255,0.05);border-radius:6px;padding:8px 6px;
+    text-align:center;font-size:11px;color:#B8CDEA;
+  }
+  .dist-item .km{color:#FFD447;font-weight:700;font-size:16px;display:block;margin-bottom:2px}
+
+  /* SVG 路线路径动画（首屏引导） */
+  @keyframes dash{to{stroke-dashoffset:0}}
+  .route-path{stroke-dasharray:8 4;stroke-dashoffset:200;animation:dash 3s linear forwards}
+
+  /* 点位脉冲 */
+  @keyframes pulse{0%{opacity:0.6;r:12}70%{opacity:0;r:22}100%{opacity:0;r:22}}
+  .venue-pulse{animation:pulse 2s infinite}
+
+  /* 章节标题小 icon */
+  .sec-emoji{font-size:26px;margin-right:8px}
+
+  /* 手机屏幕适配 */
+  @media (max-width:400px){
+    .hero h1{font-size:38px}
+    .container{padding:0 14px}
+    section{padding:16px 14px 24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<button class="toc-btn" id="tocBtn" aria-label="目录">☰</button>
+<div class="toc-panel" id="tocPanel">
+  <a href="#info"><span class="icon">📅</span>大会信息</a>
+  <a href="#opc"><span class="icon">🎯</span>方向A · OPC</a>
+  <a href="#aigc"><span class="icon">🎨</span>方向B · AIGC</a>
+  <a href="#rl"><span class="icon">🧠</span>方向C · 强化学习</a>
+  <a href="#map"><span class="icon">🗺️</span>三馆地图路线</a>
+  <a href="#teams"><span class="icon">🚩</span>两组作战</a>
+  <a href="#day1"><span class="icon">1️⃣</span>Day1 · 开幕</a>
+  <a href="#day2"><span class="icon">2️⃣</span>Day2 · AIGC</a>
+  <a href="#day3"><span class="icon">3️⃣</span>Day3 · OPC</a>
+  <a href="#day4"><span class="icon">4️⃣</span>Day4 · 收官</a>
+  <a href="#tips"><span class="icon">🔑</span>8条实战建议</a>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge">央视《经济半小时》采访方案</div>
+    <h1>WAIC 2026</h1>
+    <div class="subtitle">2026 世界人工智能大会 · 上海</div>
+    <div class="theme">智能伙伴 · 共创未来</div>
+  </div>
+
+  <!-- 大会信息 -->
+  <section id="info">
+    <div class="section-title"><span class="num">1</span>大会基本信息</div>
+    <div class="info-list">
+      <div class="info-item"><div class="label">📅 会期</div><div class="value">2026.7.17 – 7.20（周四—周日，共 4 天）</div></div>
+      <div class="info-item"><div class="label">🎯 主题</div><div class="value">智能伙伴 共创未来</div></div>
+      <div class="info-item"><div class="label">🏛️ 场地 · 三地四馆</div><div class="value">世博（世博中心 + 世博展览馆）· 张江（张江科学会堂）· 西岸（西岸国际会展中心）</div></div>
+      <div class="info-item"><div class="label">📊 规模</div><div class="value">10 万㎡+ · 1000+ 参展企业 · 3000+ 首发新品</div></div>
+      <div class="info-item"><div class="label">👑 重量嘉宾</div><div class="value">9 位图灵奖 / 诺贝尔奖得主到场</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 方向 A: OPC -->
+  <section id="opc">
+    <div class="section-title"><span class="num">2</span>三大采访方向</div>
+
+    <div class="direction a">
+      <div class="dir-head">
+        <div class="dir-icon">🎯</div>
+        <div>
+          <span class="dir-tag">方向 A</span>
+          <div class="dir-name">AI 开放计算（OPC）</div>
+          <div class="dir-sub">国产算力自主可控 · 万亿产业规模</div>
+        </div>
+      </div>
+      <div class="forum">
+        <div class="forum-label">◆ 核心论坛</div>
+        <div class="forum-name">WAIC 2026 · 全球 AI 开放计算与智能体技术生态论坛</div>
+        <div class="forum-theme">"FlagOS 筑基开放算力，Agent 启幕智能涌现"</div>
+      </div>
+
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">黄铁军</span></div>
+        <div class="g-role">北京智源人工智能研究院理事长</div>
+        <div class="g-value">OPC 中国大脑 · 权威话语</div>
+      </div>
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">王怀民</span></div>
+        <div class="g-role">中国科学院院士</div>
+        <div class="g-value">院士级技术观点</div>
+      </div>
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">Mehdi Snene</span><span class="g-en">联合国 AI 特使高级顾问</span></div>
+        <div class="g-role">联合国秘书长数字与新兴技术办公室</div>
+        <div class="g-value">全球治理视角 · 稀缺国际资源</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">林咏华</span></div>
+        <div class="g-role">智源研究院副院长兼总工程师</div>
+        <div class="g-value">技术落地一线</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">Mark Collier</span><span class="g-en">PyTorch / LF AI 执行董事</span></div>
+        <div class="g-role">PyTorch 基金会 & LF AI & Data 基金会</div>
+        <div class="g-value">国际开源大脑</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">Matt White</span><span class="g-en">Linux Foundation AI</span></div>
+        <div class="g-role">Linux 基金会 AI 全球 CTO / PyTorch CTO</div>
+        <div class="g-value">全球生态官</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐</span><span class="g-name">黄之鹏</span></div>
+        <div class="g-role">LF AI & Data 主席 / 华为 AI 开源生态总监</div>
+        <div class="g-value">中国声音入全球</div>
+      </div>
+      <div class="extra">
+        <div class="extra-title">◆ 国产算力扫街目标（展区机动）</div>
+        <div class="extra-list">华为 Atlas 950 超节点集群（50 万卡）· 中科曙光 scaleX 十万卡系统 · 东方算芯（张江独角兽 DF1000 3D 堆叠）· 中兴通讯 · 曦智科技 · 无问芯穹 · 沐曦</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 方向 B: AIGC -->
+  <section id="aigc">
+    <div class="direction b">
+      <div class="dir-head">
+        <div class="dir-icon">🎨</div>
+        <div>
+          <span class="dir-tag">方向 B</span>
+          <div class="dir-name">AIGC / 生成式人工智能</div>
+          <div class="dir-sub">千亿美元赛道 · 中国大模型出海 · 产业落地</div>
+        </div>
+      </div>
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">Yoshua Bengio</span><span class="g-en">约书亚·本吉奥</span></div>
+        <div class="g-role">深度学习三巨头 · 图灵奖得主</div>
+        <div class="g-value">顶级国际学者 · 稀缺资源</div>
+      </div>
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">姚顺雨</span></div>
+        <div class="g-role">腾讯首席 AI 科学家</div>
+        <div class="g-value">中国大模型技术领袖</div>
+      </div>
+      <div class="guest top">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐⭐</span><span class="g-name">林俊旸</span></div>
+        <div class="g-role">前阿里千问大模型负责人</div>
+        <div class="g-value">与姚顺雨同台对谈王牌</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">张亚勤</span></div>
+        <div class="g-role">清华大学智能产业研究院院长</div>
+        <div class="g-value">"2026 智能体元年"提出者</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">Max Tegmark</span><span class="g-en">MIT 教授</span></div>
+        <div class="g-role">《生命 3.0》作者 · AI 安全倡导者</div>
+        <div class="g-value">AI 安全国际视角</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐⭐</span><span class="g-name">乔治·帕里西</span><span class="g-en">Giorgio Parisi</span></div>
+        <div class="g-role">2021 诺贝尔物理学奖得主</div>
+        <div class="g-value">AI 破解 12 年物理难题</div>
+      </div>
+      <div class="guest">
+        <div class="guest-line1"><span class="stars">⭐⭐⭐</span><span class="g-name">奥马尔·亚吉</span><span class="g-en">Omar M. Yaghi</span></div>
+        <div class="g-role">2025 诺贝尔奖得主</div>
+        <div class="g-value">AI for Science</div>
+      </div>
+      <div class="extra">
+        <div class="extra-title">◆ 大模型厂商专属论坛（现场追踪）</div>
+        <div class="extra-list">阿里 · 字节 · 腾讯 · 智谱 · 月之暗面 Kimi · DeepSeek · 3000+ 首发新品发布会</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 方向 C: 强化学习 -->
+  <section id="rl">
+    <div class="direction c">
+      <div class="dir-head">
+        <div class="dir-icon">🧠</div>
+        <div>
+          <span class="dir-tag">方向 C</span>
+          <div class="dir-name">强化学习</div>
+          <div class="dir-sub">从游戏 AI 到具身智能 · 走进工厂的经济故事</div>
+        </div>
+      </div>
+
+      <div class="king">
+        <div class="king-icon">👑</div>
+        <div class="king-name">Richard Sutton · 理查德·萨顿</div>
+        <div class="king-role">强化学习之父 · 图灵奖得主 · 阿尔伯塔大学教授</div>
+        <div class="king-hl">⭐⭐⭐⭐⭐⭐ 本届最大王牌 · 主旨演讲</div>
+      </div>
+
+      <div class="extra">
+        <div class="extra-title">◆ 核心观点（可采访金句）</div>
+        <div class="extra-list">"AI 未来将从'基于人类数据学习'转向'基于经验学习'"<br>— 是理解未来 AGI 路线的关键人物</div>
+      </div>
+
+      <div class="extra gold">
+        <div class="extra-title">◆ 强化学习延伸嘉宾（现场追踪）</div>
+        <div class="extra-list">
+          · <b>清华苏航</b>（具身智能核心学者，与智元姚印青同台推演 VLA vs 物理世界）<br>
+          · <b>DeepMind / OpenAI</b> 中国区代表<br>
+          · <b>腾讯游戏 AI</b>（开悟平台）<br>
+          · <b>具身智能梯队</b>：智元 · 宇树科技 · 银河通用 · 傅里叶 · 千寻智能 · 松延动力 · 云深处
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 三馆地图 & 路线 -->
+  <section id="map">
+    <div class="section-title"><span class="num">3</span>三馆地图 · 路线规划</div>
+
+    <div class="map-wrap">
+      <div class="map-hint">◇ 上海 · 三地四馆分布示意（黄浦江两岸）◇</div>
+
+      <svg class="map-svg" viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="river" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1a4d7a"/>
+            <stop offset="100%" stop-color="#0d3a5c"/>
+          </linearGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#FF6432"/>
+          </marker>
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4DE0BC"/>
+          </marker>
+        </defs>
+
+        <!-- 背景网格 -->
+        <g opacity="0.15" stroke="#4D9BFF" stroke-width="0.5">
+          <line x1="0" y1="100" x2="700" y2="100"/>
+          <line x1="0" y1="200" x2="700" y2="200"/>
+          <line x1="0" y1="300" x2="700" y2="300"/>
+          <line x1="0" y1="400" x2="700" y2="400"/>
+          <line x1="100" y1="0" x2="100" y2="520"/>
+          <line x1="250" y1="0" x2="250" y2="520"/>
+          <line x1="400" y1="0" x2="400" y2="520"/>
+          <line x1="550" y1="0" x2="550" y2="520"/>
+        </g>
+
+        <!-- 黄浦江（S 型） -->
+        <path d="M 100 20 Q 200 120 260 220 Q 310 300 250 380 Q 200 460 260 520" 
+              fill="none" stroke="url(#river)" stroke-width="36" stroke-linecap="round" opacity="0.85"/>
+        <path d="M 100 20 Q 200 120 260 220 Q 310 300 250 380 Q 200 460 260 520" 
+              fill="none" stroke="#4D9BFF" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>
+        <text x="180" y="70" fill="#4D9BFF" font-size="14" font-weight="600" opacity="0.8" transform="rotate(50 180 70)">黄浦江</text>
+
+        <!-- 区域文字 -->
+        <text x="70" y="200" fill="#B8CDEA" font-size="13" opacity="0.6" font-weight="600">徐汇</text>
+        <text x="70" y="215" fill="#B8CDEA" font-size="11" opacity="0.5">浦西</text>
+
+        <text x="430" y="170" fill="#B8CDEA" font-size="13" opacity="0.6" font-weight="600">浦东</text>
+        <text x="430" y="185" fill="#B8CDEA" font-size="11" opacity="0.5">陆家嘴/张江/世博</text>
+
+        <!-- 张江（东北） -->
+        <g id="pt-zhangjiang">
+          <circle cx="560" cy="120" r="14" fill="#4D9BFF" filter="url(#glow)"/>
+          <circle cx="560" cy="120" r="14" fill="#4D9BFF" class="venue-pulse" opacity="0.6"/>
+          <circle cx="560" cy="120" r="6" fill="#fff"/>
+          <text x="560" y="90" fill="#fff" font-size="16" font-weight="800" text-anchor="middle">张江科学会堂</text>
+          <text x="560" y="148" fill="#4D9BFF" font-size="11" text-anchor="middle">浦东 · 张江科学城</text>
+          <text x="560" y="162" fill="#B8CDEA" font-size="10" text-anchor="middle" opacity="0.7">海科路 · 郭守敬路</text>
+        </g>
+
+        <!-- 世博（东南） -->
+        <g id="pt-shibo">
+          <circle cx="410" cy="390" r="16" fill="#FF6432" filter="url(#glow)"/>
+          <circle cx="410" cy="390" r="16" fill="#FF6432" class="venue-pulse" opacity="0.6"/>
+          <circle cx="410" cy="390" r="7" fill="#fff"/>
+          <text x="410" y="360" fill="#fff" font-size="16" font-weight="800" text-anchor="middle">世博中心 + 展览馆</text>
+          <text x="410" y="418" fill="#FF6432" font-size="11" text-anchor="middle">浦东 · 世博园（主会场）</text>
+          <text x="410" y="432" fill="#B8CDEA" font-size="10" text-anchor="middle" opacity="0.7">国展路 · 世博大道</text>
+          <text x="410" y="446" fill="#FFD447" font-size="10" text-anchor="middle" font-weight="600">⭐ 开幕/闭幕 · 主旨演讲</text>
+        </g>
+
+        <!-- 西岸（西南） -->
+        <g id="pt-xijian">
+          <circle cx="120" cy="400" r="14" fill="#4DE0BC" filter="url(#glow)"/>
+          <circle cx="120" cy="400" r="14" fill="#4DE0BC" class="venue-pulse" opacity="0.6"/>
+          <circle cx="120" cy="400" r="6" fill="#fff"/>
+          <text x="120" y="370" fill="#fff" font-size="16" font-weight="800" text-anchor="middle">西岸国际会展中心</text>
+          <text x="120" y="428" fill="#4DE0BC" font-size="11" text-anchor="middle">徐汇 · 西岸滨江</text>
+          <text x="120" y="442" fill="#B8CDEA" font-size="10" text-anchor="middle" opacity="0.7">龙腾大道 · 龙耀路</text>
+        </g>
+
+        <!-- 距离标注（三角形连线，虚线） -->
+        <g id="triangle" opacity="0.35" stroke="#7A93B8" stroke-width="1" stroke-dasharray="4 4" fill="none">
+          <line x1="410" y1="390" x2="560" y2="120"/>
+          <line x1="410" y1="390" x2="120" y2="400"/>
+          <line x1="120" y1="400" x2="560" y2="120"/>
+        </g>
+        <g fill="#7A93B8" font-size="11" opacity="0.7">
+          <text x="505" y="250">~19 km</text>
+          <text x="260" y="410">~11 km</text>
+          <text x="305" y="245" transform="rotate(-25 305 245)">~25 km</text>
+        </g>
+
+        <!-- 路线图层（由 JS 切换 display） -->
+
+        <!-- Day 1: A=世博, B=张江 -->
+        <g id="route-day1" style="display:none">
+          <circle cx="410" cy="390" r="22" fill="none" stroke="#FF6432" stroke-width="3" opacity="0.7"/>
+          <text x="430" y="460" fill="#FF6432" font-size="13" font-weight="700">A组·全天驻守</text>
+          <circle cx="560" cy="120" r="22" fill="none" stroke="#4DE0BC" stroke-width="3" opacity="0.7"/>
+          <text x="470" y="70" fill="#4DE0BC" font-size="13" font-weight="700">B组·全天扫街</text>
+        </g>
+
+        <!-- Day 2: A=张江→世博, B=张江→西岸 -->
+        <g id="route-day2" style="display:none">
+          <!-- A组: 张江(王牌对谈) -> 世博(AI Science) -->
+          <path d="M 560 120 Q 490 240 410 390" fill="none" stroke="#FF6432" stroke-width="3.5" 
+                marker-end="url(#arrow-orange)" opacity="0.85" class="route-path"/>
+          <text x="485" y="265" fill="#FF6432" font-size="12" font-weight="700" transform="rotate(50 485 265)">A组 09→14</text>
+          
+          <!-- B组: 张江(六强) -> 西岸(天鹜) -->
+          <path d="M 560 120 Q 380 200 260 300 Q 190 350 120 400" fill="none" stroke="#4DE0BC" stroke-width="3.5" 
+                marker-end="url(#arrow-green)" opacity="0.85" class="route-path"/>
+          <text x="280" y="260" fill="#4DE0BC" font-size="12" font-weight="700">B组 09→16:30</text>
+        </g>
+
+        <!-- Day 3: A=张江→西岸, B=西岸驻守 -->
+        <g id="route-day3" style="display:none">
+          <!-- A组: 张江(OPC论坛) -> 西岸(VLA) -->
+          <path d="M 560 120 Q 340 220 120 400" fill="none" stroke="#FF6432" stroke-width="3.5" 
+                marker-end="url(#arrow-orange)" opacity="0.85" class="route-path"/>
+          <text x="310" y="235" fill="#FF6432" font-size="12" font-weight="700">A组 09→17</text>
+          
+          <!-- B组: 西岸全天 -->
+          <circle cx="120" cy="400" r="22" fill="none" stroke="#4DE0BC" stroke-width="3" opacity="0.7"/>
+          <text x="30" y="460" fill="#4DE0BC" font-size="12" font-weight="700">B组·具身智能全天</text>
+        </g>
+
+        <!-- Day 4: A=世博兜底闭幕, B=三馆空镜 -->
+        <g id="route-day4" style="display:none">
+          <!-- A组: 世博驻守 -->
+          <circle cx="410" cy="390" r="22" fill="none" stroke="#FF6432" stroke-width="3" opacity="0.7"/>
+          <text x="420" y="460" fill="#FF6432" font-size="13" font-weight="700">A组·闭幕兜底</text>
+          
+          <!-- B组: 三馆机动补空镜 -->
+          <path d="M 120 400 Q 200 300 300 250 Q 430 190 560 120" fill="none" stroke="#4DE0BC" stroke-width="3" 
+                stroke-dasharray="6 4" opacity="0.75" marker-end="url(#arrow-green)"/>
+          <path d="M 560 120 Q 490 240 410 390" fill="none" stroke="#4DE0BC" stroke-width="3" 
+                stroke-dasharray="6 4" opacity="0.75" marker-end="url(#arrow-green)"/>
+          <text x="280" y="310" fill="#4DE0BC" font-size="11" font-weight="700">B组 · 三馆补拍空镜</text>
+        </g>
+
+        <!-- 全览 -->
+        <g id="route-all" style="display:block">
+          <!-- 主要通道 -->
+          <path d="M 560 120 Q 490 240 410 390" fill="none" stroke="#FF6432" stroke-width="2" opacity="0.4" stroke-dasharray="5 3"/>
+          <path d="M 410 390 Q 265 395 120 400" fill="none" stroke="#FFD447" stroke-width="2" opacity="0.4" stroke-dasharray="5 3"/>
+          <path d="M 120 400 Q 340 260 560 120" fill="none" stroke="#4DE0BC" stroke-width="2" opacity="0.4" stroke-dasharray="5 3"/>
+        </g>
+      </svg>
+
+      <!-- 三馆距离 -->
+      <div class="distances">
+        <div class="dist-item"><span class="km">~11 km</span>世博 ↔ 西岸<br>过江隧道</div>
+        <div class="dist-item"><span class="km">~19 km</span>世博 ↔ 张江<br>浦东同区</div>
+        <div class="dist-item"><span class="km">~25 km</span>西岸 ↔ 张江<br>跨江最远</div>
+      </div>
+
+      <!-- 日程 tab -->
+      <div class="day-tabs">
+        <button class="day-tab all active" data-day="all">全览</button>
+        <button class="day-tab" data-day="day1">Day 1</button>
+        <button class="day-tab" data-day="day2">Day 2</button>
+        <button class="day-tab" data-day="day3">Day 3</button>
+        <button class="day-tab" data-day="day4">Day 4</button>
+      </div>
+
+      <!-- 路线信息（随 tab 切换） -->
+      <div class="route-info" id="routeInfo">
+        <div class="rt-title">🗺️ 三馆机动全览</div>
+        <div class="rt-row"><span class="rt-tag rt-a">A组</span><div>主编 + 主持人 · 王牌捕手 · 三馆机动跨江</div></div>
+        <div class="rt-row"><span class="rt-tag rt-b">B组</span><div>记者 + 摄像 · 扫街兜底 · 张江主战 → 西岸具身智能</div></div>
+        <div style="margin-top:8px;color:#B8CDEA;font-size:12px">◆ 世博为开闭幕主场；张江主打 AIGC + OPC；西岸主打具身智能</div>
+      </div>
+
+      <!-- 交通提示 -->
+      <div class="transit">
+        🚗 <b>关键跨江通道：</b>西岸 ↔ 世博走 <b>龙耀路隧道</b>（10-15 分钟）；世博 ↔ 张江走 <b>罗山路高架</b>（20-30 分钟）；西岸 ↔ 张江建议 <b>先隧道过江再高架</b>（35-50 分钟，避开早晚高峰）。<br>
+        🚇 <b>轨交：</b>世博站（<b>8号线/13号线</b>）· 张江人工智能岛（<b>13号线张江路 / 2号线</b>）· 西岸（<b>11号线云锦路 / 龙耀路</b>）。<br>
+        ⚠️ 每天酒店建议住浦东世博/张江附近，主战场靠近；跨江采访优先安排早/晚场，避开 7-9 点、17-19 点。
+      </div>
+
+      <!-- 图例 -->
+      <div class="legend">
+        <div class="lg"><span class="dot" style="background:#FF6432"></span>世博（主会场·开闭幕）</div>
+        <div class="lg"><span class="dot" style="background:#4D9BFF"></span>张江（AIGC+OPC 主场）</div>
+        <div class="lg"><span class="dot" style="background:#4DE0BC"></span>西岸（具身智能主场）</div>
+        <div class="lg"><span class="line" style="background:#FF6432"></span>A 组路线（王牌）</div>
+        <div class="lg"><span class="line" style="background:#4DE0BC"></span>B 组路线（扫街）</div>
+        <div class="lg"><span class="line-dash" style="border-color:#7A93B8"></span>三馆连线（示意）</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 两组作战 -->
+  <section id="teams">
+    <div class="section-title"><span class="num">4</span>兵分两路 · 双组作战</div>
+    <div class="teams">
+      <div class="team a">
+        <div class="team-name">🟠 A 组 · 王牌捕手</div>
+        <div class="team-mission">主编 + 主持人 · 冲王牌嘉宾深度专访</div>
+        <div class="team-detail">
+          <b>核心任务：</b>Sutton / Bengio / Snene / 姚顺雨 × 林俊旸对谈 / Mehdi Snene<br>
+          <b>行动路线：</b>世博 → 张江 → 西岸 三馆机动<br>
+          <b>兜底：</b>Day 4 补拍前 3 天未约到嘉宾
+        </div>
+      </div>
+      <div class="team b">
+        <div class="team-name">🟢 B 组 · 扫街尖兵</div>
+        <div class="team-mission">记者 + 摄像 · 展区 + 大厂 + 空镜</div>
+        <div class="team-detail">
+          <b>核心任务：</b>国产算力展台 · 大模型六强 · 具身智能梯队<br>
+          <b>行动路线：</b>张江主场 · 西岸具身智能 · 世博兜底空镜<br>
+          <b>兜底：</b>Day 4 补拍缺口素材 · 素材归档
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Day 1 -->
+  <section id="day1">
+    <div class="day day-1">
+      <div class="day-title">DAY 1<span class="day-tag">7/17 · 周四 · 开幕日</span></div>
+      <div class="day-mission"><b>◆ 今日核心目标：</b>Sutton 主旨演讲 + 后台通道抢独家</div>
+
+      <div class="group a">
+        <div class="group-label">🟠 A 组 · 世博主战场</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>Sutton / Bengio 主旨演讲拍摄</div></div>
+        <div class="sch"><div class="sch-time">12:00-13:30</div><div class="sch-txt"><span class="venue venue-shibo">世博</span><span class="hl">冲后台通道</span> · 抢 Sutton 5-10 分钟</div></div>
+        <div class="sch"><div class="sch-time">14:00-17:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>黄铁军 · 张亚勤 · 王怀民 系列演讲</div></div>
+        <div class="sch"><div class="sch-time">19:00</div><div class="sch-txt"><span class="venue venue-hotel">酒店</span>Day 1 素材粗剪</div></div>
+      </div>
+      <div class="group b">
+        <div class="group-label">🟢 B 组 · 张江扫街</div>
+        <div class="sch"><div class="sch-time">08:30</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>展馆开馆前踩点</div></div>
+        <div class="sch"><div class="sch-time">10:00-12:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>东方算芯 DF1000 · 华为 Atlas 950 展台</div></div>
+        <div class="sch"><div class="sch-time">14:00-17:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>中科曙光 · 中兴 · 无问芯穹 · 沐曦扫街</div></div>
+        <div class="sch"><div class="sch-time">17:00-18:30</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>3000+ 首发新品盘点录制</div></div>
+        <div class="sch"><div class="sch-time">19:00</div><div class="sch-txt"><span class="venue venue-hotel">酒店</span>Day 2 预约二次确认</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 2 -->
+  <section id="day2">
+    <div class="day day-2">
+      <div class="day-title">DAY 2<span class="day-tag">7/18 · 周五 · AIGC 主战场</span></div>
+      <div class="day-mission"><b>◆ 今日核心目标：</b>姚顺雨 × 林俊旸对谈现场 + 独家</div>
+
+      <div class="group a">
+        <div class="group-label">🟠 A 组 · 张江王牌</div>
+        <div class="sch"><div class="sch-time">09:00-11:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span><span class="hl">姚顺雨 × 林俊旸对谈</span>（王牌场）</div></div>
+        <div class="sch"><div class="sch-time">11:00-12:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span><span class="hl">走廊 5 分钟</span> 抢独家专访</div></div>
+        <div class="sch"><div class="sch-time">14:00-17:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>AI for Science 论坛：帕里西 · 亚吉 · Tegmark</div></div>
+        <div class="sch"><div class="sch-time">17:30</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>Bengio 兜底采访机会</div></div>
+      </div>
+      <div class="group b">
+        <div class="group-label">🟢 B 组 · 大模型六强</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>大模型六强展台：阿里 · 腾讯 · 字节</div></div>
+        <div class="sch"><div class="sch-time">14:00-16:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>智谱 · Kimi · DeepSeek 深度专访</div></div>
+        <div class="sch"><div class="sch-time">16:30-18:00</div><div class="sch-txt"><span class="venue venue-xijian">西岸</span>天鹜科技（AI 蛋白质）洪亮专访</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 3 -->
+  <section id="day3">
+    <div class="day day-3">
+      <div class="day-title">DAY 3<span class="day-tag">7/19 · 周六 · OPC + 强化学习深挖</span></div>
+      <div class="day-mission"><b>◆ 今日核心目标：</b>OPC 论坛全覆盖 + 国产算力叙事</div>
+
+      <div class="group a">
+        <div class="group-label">🟠 A 组 · OPC 论坛</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span><span class="hl">AI 开放计算论坛</span>：黄铁军 · 王怀民 · Mehdi Snene · Mark Collier</div></div>
+        <div class="sch"><div class="sch-time">12:00-13:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span><span class="hl">Mehdi Snene 独家</span>（联合国治理角度）</div></div>
+        <div class="sch"><div class="sch-time">14:00-16:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">张江</span>Matt White + 黄之鹏（国际开源生态）</div></div>
+        <div class="sch"><div class="sch-time">17:00-18:30</div><div class="sch-txt"><span class="venue venue-xijian">西岸</span>清华苏航 × 智元姚印青（VLA 对谈）</div></div>
+      </div>
+      <div class="group b">
+        <div class="group-label">🟢 B 组 · 具身智能</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-xijian">西岸</span>200 家具身智能同台：智元 · 宇树 · 银河通用</div></div>
+        <div class="sch"><div class="sch-time">14:00-17:00</div><div class="sch-txt"><span class="venue venue-xijian">西岸</span>宇树无人工厂 · 傅里叶 · 千寻 · 松延</div></div>
+        <div class="sch"><div class="sch-time">17:30</div><div class="sch-txt"><span class="venue venue-xijian">西岸</span>硅谷华人机器人天团（Genesis · PI）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 4 -->
+  <section id="day4">
+    <div class="day day-4">
+      <div class="day-title">DAY 4<span class="day-tag">7/20 · 周日 · 收官 + 兜底</span></div>
+      <div class="day-mission"><b>◆ 今日核心目标：</b>补拍 + 兜底 + 闭幕成果</div>
+
+      <div class="group a">
+        <div class="group-label">🟠 A 组 · 兜底 + 闭幕</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>前 3 天未约到嘉宾的<span class="hl">兜底采访</span></div></div>
+        <div class="sch"><div class="sch-time">14:00-16:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>闭幕式 · 收官发言 · 成果发布</div></div>
+        <div class="sch"><div class="sch-time">16:00-18:00</div><div class="sch-txt"><span class="venue venue-shibo">世博</span>记者中心 · 组委会总结数据</div></div>
+      </div>
+      <div class="group b">
+        <div class="group-label">🟢 B 组 · 空镜 + 归档</div>
+        <div class="sch"><div class="sch-time">09:00-12:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">三馆</span>补拍空镜 · 观众反应 · 场景画面</div></div>
+        <div class="sch"><div class="sch-time">14:00-17:00</div><div class="sch-txt"><span class="venue venue-zhangjiang">三馆</span>预留缺口素材补拍</div></div>
+        <div class="sch"><div class="sch-time">18:00</div><div class="sch-txt"><span class="venue venue-hotel">酒店</span>撤场 · 素材归档 · 返程</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8 条建议 -->
+  <section id="tips">
+    <div class="section-title"><span class="num">5</span>最大化完成采访 · 8 条实战建议</div>
+    <div class="tips-grid">
+      <div class="tip"><div class="tip-head"><span class="tip-num">1</span><span class="tip-title">提前 3-5 天到位</span></div><div class="tip-desc">7/14-16 通过央视新闻中心对接组委会新闻部（东浩兰生），拿媒体证 + VIP 通道</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">2</span><span class="tip-title">兵分两路 双机位</span></div><div class="tip-desc">A 组主编 + 主持人主打王牌；B 组记者 + 摄像扫街兜底</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">3</span><span class="tip-title">国际嘉宾预约走翻译</span></div><div class="tip-desc">Sutton / Bengio / Snene 在沪 24-48h，英文邮件对接机构</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">4</span><span class="tip-title">大厂负责人走公关口</span></div><div class="tip-desc">腾讯 CDG / 阿里 / 字节 PR 部门；对谈结束"走廊 5 分钟"抢独家</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">5</span><span class="tip-title">展区扫街要预约</span></div><div class="tip-desc">华为 · 东方算芯 · 天鹜科技 有 PR 值守，指定时段到台</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">6</span><span class="tip-title">金句 brief 给主持人</span></div><div class="tip-desc">"经验学习>数据学习" · "2026 智能体元年" · "FlagOS 开源生态"</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">7</span><span class="tip-title">经济半小时独家角度</span></div><div class="tip-desc">OPC → 新质生产力；AIGC → 千亿赛道出海；强化学习 → 走进工厂</div></div>
+      <div class="tip"><div class="tip-head"><span class="tip-num">8</span><span class="tip-title">人物 + 场景 + 数字</span></div><div class="tip-desc">技术负责人 + 真实落地场景 + 硬数据（融资 · 效率 · 就业）三件套</div></div>
+    </div>
+  </section>
+
+  <!-- 底部 -->
+  <div class="footer">
+    <div class="brand">CCTV · 经济半小时</div>
+    <div class="sub">WAIC 2026 采访方案 H5 · 2026.7.17—7.20 · 上海</div>
+  </div>
+
+</div>
+
+<script>
+  // 进度条
+  var pf=document.getElementById('progressFill');
+  function upd(){
+    var h=document.documentElement;
+    var s=(h.scrollTop||document.body.scrollTop);
+    var m=(h.scrollHeight-h.clientHeight);
+    pf.style.width=(m>0?(s/m*100):0)+'%';
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  upd();
+
+  // 目录
+  var btn=document.getElementById('tocBtn'),panel=document.getElementById('tocPanel');
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    panel.classList.toggle('show');
+  });
+  document.addEventListener('click',function(){panel.classList.remove('show')});
+  panel.addEventListener('click',function(e){
+    if(e.target.tagName==='A'){setTimeout(function(){panel.classList.remove('show')},100)}
+  });
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=this.getAttribute('href').slice(1);
+      var el=document.getElementById(id);
+      if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'})}
+    });
+  });
+
+  // 地图 tab 切换
+  var routeInfoData={
+    all:{title:'🗺️ 三馆机动全览',rows:[
+      ['A组','主编 + 主持人 · 王牌捕手 · 三馆机动跨江'],
+      ['B组','记者 + 摄像 · 扫街兜底 · 张江主战 → 西岸具身智能']
+    ],foot:'◆ 世博为开闭幕主场；张江主打 AIGC + OPC；西岸主打具身智能'},
+    day1:{title:'📅 Day 1 · 7/17 周四 · 开幕日',rows:[
+      ['A组','🟠 世博全天驻守 · Sutton / Bengio 主旨演讲 + 后台通道抢独家'],
+      ['B组','🟢 张江扫街 · 华为 Atlas 950 / 东方算芯 / 中科曙光 / 无问芯穹 / 沐曦']
+    ],foot:'◆ 两组不跨江 · 世博 & 张江同处浦东 · 距离 ~19km · 罗山路高架 20-30 分钟'},
+    day2:{title:'📅 Day 2 · 7/18 周五 · AIGC 主战场',rows:[
+      ['A组','🟠 张江(姚顺雨×林俊旸对谈) → 世博(AI for Science) → Bengio 兜底'],
+      ['B组','🟢 张江(大模型六强) → 西岸(天鹜科技 · AI 蛋白质)']
+    ],foot:'◆ B 组下午跨江 · 张江→西岸 25km · 建议 16:00 出发预留 40 分钟'},
+    day3:{title:'📅 Day 3 · 7/19 周六 · OPC + 强化学习深挖',rows:[
+      ['A组','🟠 张江(OPC 论坛 · 黄铁军 / Snene / Matt White) → 西岸(苏航×姚印青 VLA)'],
+      ['B组','🟢 西岸全天 · 200 家具身智能同台 · 智元 / 宇树 / 银河通用 / 傅里叶']
+    ],foot:'◆ 关键跨江日 · A 组下午 16:00 张江→西岸 · 走龙耀路隧道 30-40 分钟'},
+    day4:{title:'📅 Day 4 · 7/20 周日 · 收官 + 兜底',rows:[
+      ['A组','🟠 世博全天 · 兜底采访 + 闭幕式 + 组委会数据汇总'],
+      ['B组','🟢 三馆机动 · 补拍空镜 · 观众反应 · 素材归档撤场']
+    ],foot:'◆ 收官日 · A 组世博驻守 · B 组三馆巡回补拍'}
+  };
+  var layers={all:'route-all',day1:'route-day1',day2:'route-day2',day3:'route-day3',day4:'route-day4'};
+  var tabs=document.querySelectorAll('.day-tab');
+  var routeInfo=document.getElementById('routeInfo');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      var day=this.getAttribute('data-day');
+      tabs.forEach(function(x){x.classList.remove('active')});
+      this.classList.add('active');
+      Object.keys(layers).forEach(function(k){
+        var el=document.getElementById(layers[k]);
+        if(el)el.style.display=(k===day?'block':'none');
+      });
+      // 重新触发动画
+      var active=document.getElementById(layers[day]);
+      if(active){
+        active.querySelectorAll('.route-path').forEach(function(p){
+          p.style.animation='none';p.offsetHeight;p.style.animation='dash 2.5s linear forwards';
+        });
+      }
+      // 更新信息
+      var d=routeInfoData[day];
+      var html='<div class="rt-title">'+d.title+'</div>';
+      d.rows.forEach(function(r){
+        var cls=r[0]==='A组'?'rt-a':'rt-b';
+        html+='<div class="rt-row"><span class="rt-tag '+cls+'">'+r[0]+'</span><div>'+r[1]+'</div></div>';
+      });
+      html+='<div style="margin-top:8px;color:#B8CDEA;font-size:12px">'+d.foot+'</div>';
+      routeInfo.innerHTML=html;
+    });
+  });
+</script>
+
+</body>
+</html>
